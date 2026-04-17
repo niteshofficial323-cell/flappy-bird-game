@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Flappy Bird</title>
+  <style>
+    canvas {
+      border: 2px solid black;
+      background: skyblue;
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="gameCanvas" width="400" height="500"></canvas>
+
+<script>
+let canvas = document.getElementById("gameCanvas");
+let ctx = canvas.getContext("2d");
+
+let bird = { x: 50, y: 150, gravity: 2, lift: -30, velocity: 0 };
+let pipes = [];
+let frame = 0;
+
+document.addEventListener("keydown", () => {
+  bird.velocity = bird.lift;
+});
+
+function drawBird() {
+  ctx.fillStyle = "yellow";
+  ctx.fillRect(bird.x, bird.y, 20, 20);
+}
+
+function update() {
+  bird.velocity += bird.gravity;
+  bird.y += bird.velocity;
+
+  if (frame % 90 === 0) {
+    let top = Math.random() * 200;
+    pipes.push({ x: 400, top: top, bottom: top + 120 });
+  }
+
+  pipes.forEach(p => {
+    p.x -= 2;
+
+    ctx.fillStyle = "green";
+    ctx.fillRect(p.x, 0, 30, p.top);
+    ctx.fillRect(p.x, p.bottom, 30, canvas.height);
+
+    if (
+      bird.x < p.x + 30 &&
+      bird.x + 20 > p.x &&
+      (bird.y < p.top || bird.y + 20 > p.bottom)
+    ) {
+      alert("Game Over");
+      document.location.reload();
+    }
+  });
+
+  frame++;
+}
+
+function gameLoop() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  drawBird();
+  update();
+  requestAnimationFrame(gameLoop);
+}
+
+gameLoop();
+</script>
+
+</body>
+</html>
